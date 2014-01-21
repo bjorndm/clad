@@ -1,0 +1,67 @@
+CLAD
+====
+
+Introduction
+------------
+
+CLAD is a pure and plain C Library with Algorithms and Data structures 
+for general use under development. CLAD is written in ANSI 89 C for maximum portability and licensed under the MIT license.
+
+By large the idea of this library is to provide a liberally licensed library
+for ANSI C, filled to the brim with all sorts of useful macros, algorithms and 
+data structures that are not present in the C standard library, but that are 
+commonly found in other programming languages. Useful features from 
+other MIT licensed libraries may be reworked and incorporated into this 
+library as well.
+
+CLAD already provides a first version of the following features:
+
+* platform detection macros based on Bjorn Reese's work.
+* useful preprocessor macros.
+* simple unit testing.
+* malloc wrappers (needed on some platforms).
+* allocators
+
+The following features are planned:
+
+* simple memory pools
+* dynamic strings
+* dynamic arrays
+* linked lists
+* intrusive linked lists
+* binary trees
+* intrusive binary trees
+* ...
+
+
+
+Credits
+-------
+
+* Bjorn Reese for predef.h
+
+Ideas
+-----
+
+In ANSI C, data structures such as linked lists, hash tables, 
+dynamic arrays, trees, etc can be implemented using different approaches
+with regards to the elements contained.
+
+1. Implement element-specific data structures. This is the most efficient but not reusable.
+2. Use macros to manipulate element specific data structures. This works but doesn't always look very nice.
+3. Use x-macros to generate element specific data structures. This works well but also doesn't work very nicely. 
+4. Use void * pointers to link to the generic elements. This could cause type problems if the user doesn't take care. 
+5. Do as 4. but write element-specific wrappers manually or though macros. This works well but has some overhead.
+6. Use integer indexes into an array or dynamic array of the elements. This is something I'd like to explore.
+7. Use intrusive data structures in which the element contains the structure node as opposed to a regular approach where the structure node links to the . This works nicely, but some C safety standards, such as MISRA C forbid the use of offsetof() which makes this approach not usable if such standards must be followed. I consider this a bug in those standards, but it's not easy to change them so.
+8. Use variants. This is quite limited.
+
+Since there is no absolutely perfect approach, clad may include several 
+approaches for the various data structures.
+
+
+
+
+ 
+
+
