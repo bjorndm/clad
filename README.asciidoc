@@ -7,20 +7,20 @@ Introduction
 CLAD is a pure and plain C Library with Algorithms and Data structures 
 for general use under development. CLAD is written in ANSI 89 C for maximum portability and licensed under the MIT license.
 
-By large the idea of this library is to provide a liberally licensed library
+By large the idea of this library is to provide a liberally MIT licensed library
 for ANSI C, filled to the brim with all sorts of useful macros, algorithms and 
 data structures that are not present in the C standard library, but that are 
 commonly found in other programming languages. Useful features from 
-other MIT licensed libraries may be reworked and incorporated into this 
-library as well.
+other MIT licensed libraries may be incorporated into this library as well.
 
 CLAD already provides a first version of the following features:
 
-* platform detection macros based on Bjorn Reese's work.
 * useful preprocessor macros.
 * simple unit testing.
 * malloc wrappers (needed on some platforms).
 * allocators
+* platform detection macros based on Bjorn Reese's work.
+* simple json parser based on Serge A. Zaitsev's work
 
 The following features are planned:
 
@@ -31,6 +31,7 @@ The following features are planned:
 * intrusive linked lists
 * binary trees
 * intrusive binary trees
+* preferably *hand-written* documentation in Asciidoc format.
 * ...
 
 
@@ -39,6 +40,7 @@ Credits
 -------
 
 * Bjorn Reese for predef.h
+* Serge A. Zaitsev's for jsmn
 
 Ideas
 -----
@@ -60,8 +62,30 @@ Since there is no absolutely perfect approach, clad may include several
 approaches for the various data structures.
 
 
+License
+-------
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Bjorn De Meyer.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
- 
 
 
