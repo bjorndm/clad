@@ -39,7 +39,7 @@ Implemented Features
 
 === Name Space Emulation
 Several modules of CLAD enable name space emulation though const structs 
-fuilled with function pointers. Usage is very simple. If [module] is the clad module you want to use and [ns] is the name space pointer you want to import it as, then declare a name space like this: 
+filled with function pointers. Usage is very simple. If [module] is the clad module you want to use and [ns] is the name space pointer you want to import it as, then declare a name space like this: 
 
 ---
 #include "clad/[module].h"
