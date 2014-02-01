@@ -23,7 +23,7 @@ CLAD_API void clad_free(void * old) {
 }
 
 /** Struct for namespace emulation. */
-CLAD_API struct clad_memory_api clad_memory_implementation = {
+CLAD_API const struct clad_memory_api clad_memory_implementation = {
   clad_calloc,
   clad_malloc,
   clad_realloc,

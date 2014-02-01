@@ -30,7 +30,7 @@ struct clad_memory_api {
 };
 
 /* Struct for name space emulation. */
-extern CLAD_API struct clad_memory_api clad_memory_implementation;
+extern CLAD_API const struct clad_memory_api clad_memory_implementation;
 
 
 #endif /* CLAD_MEMORY_H_INCLUDED */

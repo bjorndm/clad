@@ -34,6 +34,31 @@ The following features are planned:
 * preferably *hand-written* documentation in Asciidoc format.
 * ...
 
+Implemented Features
+--------------------
+
+=== Name Space Emulation
+Several modules of CLAD enable name space emulation though const structs 
+fuilled with function pointers. Usage is very simple. If [module] is the clad module you want to use and [ns] is the name space pointer you want to import it as, then declare a name space like this: 
+
+---
+#include "clad/[module].h"
+#include "clad/nse.h"
+
+USING(clad_[module], [ns]);
+---
+
+
+Then you can call the functions form the module abbreviated though the name space pointer like this:
+
+---
+
+int main(void) {
+  ns->foo; /* In stead of clad_module_foo or clad_foo. */
+}
+
+This approach also has as the benefit that if you want to use a different implementation, that maintains the same API, only the USING statement needs to be modified.
+
 
 
 Credits
