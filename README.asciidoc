@@ -59,7 +59,7 @@ int main(void) {
   ns->foo; /* In stead of clad_module_foo or clad_foo. */
 }
 
----
+----
 
 This approach also has as the benefit that if you want to use a different implementation, that maintains the same API, only the USING statement needs to be modified.
 
