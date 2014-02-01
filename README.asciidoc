@@ -80,7 +80,7 @@ with regards to the elements contained.
 
 1. Implement element-specific data structures. This is the most efficient but not reusable.
 2. Use macros to manipulate element specific data structures. This works but doesn't always look very nice.
-3. Use x-macros to generate element specific data structures. This works well but also doesn't work very nicely. 
+3. Use x-macros to generate element specific data structures. This works well but also doesn't look very nice.
 4. Use void * pointers to link to the generic elements. This could cause type problems if the user doesn't take care. 
 5. Do as 4. but write element-specific wrappers manually or though macros. This works well but has some overhead.
 6. Use integer indexes into an array or dynamic array of the elements. This is something I'd like to explore.
