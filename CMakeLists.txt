@@ -22,7 +22,8 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 # Set include and lib dirs. 
 include_directories("include" "include/clad")
 
-set(CLAD_SRC_FILES src/test.c src/variant.c src/memory.c src/allocator.c src/pool.c)
+set(CLAD_SRC_FILES src/test.c src/variant.c src/memory.c src/allocator.c 
+                   src/pool.c src/sb.c)
 message(STATUS ${CLAD_SRC_FILES})
 set_source_files_properties(${CLAD_SRC_FILES} PROPERTIES LANGUAGE C)
 

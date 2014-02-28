@@ -5,13 +5,16 @@ Introduction
 ------------
 
 CLAD is a pure and plain C Library with Algorithms and Data structures 
-for general use under development. CLAD is written in ANSI 89 C for maximum portability and licensed under the MIT license.
+for general use under development. CLAD is written in ANSI 89 C, with 
+as only extension that the public names are longer than 6 characters. 
+CLAD is licensed under the MIT license.
 
-By large the idea of this library is to provide a liberally MIT licensed library
-for ANSI C, filled to the brim with all sorts of useful macros, algorithms and 
-data structures that are not present in the C standard library, but that are 
-commonly found in other programming languages. Useful features from 
-other MIT licensed libraries may be incorporated into this library as well.
+By large the idea of this library is to provide a liberally MIT licensed 
+library for ANSI C, filled to the brim with all sorts of useful macros, 
+algorithms and  data structures that are not present in the C standard 
+library, but that are commonly found in other programming languages. 
+Useful features from other MIT licensed libraries may be incorporated into 
+this library as well.
 
 CLAD already provides a first version of the following features:
 
@@ -25,7 +28,7 @@ CLAD already provides a first version of the following features:
 The following features are planned:
 
 * simple memory pools
-* dynamic strings
+* simple string buffers
 * dynamic arrays
 * linked lists
 * intrusive linked lists

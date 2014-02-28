@@ -1,6 +1,6 @@
 
-#ifndef CLAD_MACRO_H_INCLUDED
-#define CLAD_MACRO_H_INCLUDED
+#ifndef CLAD_PP_H_INCLUDED
+#define CLAD_PP_H_INCLUDED
 
 /* This header file contains some utility preprocessor macros of general use 
 and for the use of CLAD. */
