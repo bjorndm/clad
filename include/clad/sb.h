@@ -16,7 +16,7 @@ enum clad_sb_constants {
 
 
 /* An empty character buffer to initialize empty stringbuffers with. */
-CLAD_API char clad_sb_empty_buffer[]; 
+CLAD_API const char clad_sb_empty_buffer[1];
 
 
 /* An sb is a dynamically allocated string buffer. */

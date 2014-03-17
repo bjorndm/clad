@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-CLAD_API char clad_sb_empty_buffer[1] = {'\0'};
+CLAD_API const char clad_sb_empty_buffer[1] = {'\0'};
 
 /** Dynamically allocates a pointer to an empty wrapper structure with no 
  * space available. */
@@ -40,8 +40,8 @@ CLAD_API struct clad_sb *
 clad_sb_init_empty(struct clad_sb * me) {
   if(!me) return me;
   me->length       = 0;
-  me->space = 0;
-  me->bytes      = NULL;
+  me->space        = 0;
+  me->bytes        = &clad_sb_empty_buffer;
   return me;
 }
 
@@ -72,15 +72,15 @@ clad_sb_init_buf(struct clad_sb * me, char * str, size_t len) {
     return clad_sb_init_empty(me);
   } 
     
-  me->bytes = clad_calloc(space, 1);
+  me->bytes     = clad_calloc(space, 1);
   
   if (!me->bytes) {
-    me->space = CLAD_SB_ERROR_NOMEM;
+    me->space   = CLAD_SB_ERROR_NOMEM;
     return NULL;
   }
 
-  me->space = space;
-  me->length       = len;
+  me->space     = space;
+  me->length    = len;
   memmove(me->bytes, str, len);
   clad_sb_ensure_nul(me);
   
