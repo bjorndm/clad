@@ -14,14 +14,19 @@ enum clad_sb_constants {
   CLAD_SB_INCREMENT        =  64 ,
 };
 
+
+/* An empty character buffer to initialize empty stringbuffers with. */
+CLAD_API char clad_sb_empty_buffer[]; 
+
+
 /* An sb is a dynamically allocated string buffer. */
 struct clad_sb {
   /* Pointer to bytes of data. */
   char * bytes;
-  /* Actual string size in bytes (not characters). */
-  int    size;
-  /* Allocated space, negative means not allocated or may be an error flag. */
-  int    space_flags;
+  /* Allocated space. Must be at least length+1, or 0 for the empty string buffer. */
+  size_t space;
+  /* Actual string length in bytes (not characters). */
+  size_t length;
 };
 
 
@@ -48,7 +53,7 @@ clad_sb_init_cstr(struct clad_sb * me, char * str);
 
 /** Initializes the string buffer from a C char buffer with length len. */
 CLAD_API struct clad_sb * 
-clad_sb_init_buf(struct clad_sb * me, char * str, int len);
+clad_sb_init_buf(struct clad_sb * me, char * str, size_t len);
 
 /** Initializes the string buffer from another clad_sb. */
 CLAD_API struct clad_sb * 
@@ -70,8 +75,12 @@ clad_sb_make_cstr(char * cstr);
 /** Creates a string buffer from a c byte buffer. 
  * The result must be freed with clad_sb_free(). */
 CLAD_API struct clad_sb * 
-clad_sb_make_buf(char * cstr, int size);
+clad_sb_make_buf(char * cstr, size_t size);
 
+/** Detaches the buffer from the clad_sb. The buffer must be freed with 
+ the currently active default deallocator. */
+CLAD_API int 
+clad_sb_detach(struct clad_sb * me, size_t * size, char ** buffer);
 
 /** Returns the length of the string buffer in bytes. */
 CLAD_API int 

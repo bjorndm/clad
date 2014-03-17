@@ -7,6 +7,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+CLAD_API char clad_sb_empty_buffer[1] = {'\0'};
+
 /** Dynamically allocates a pointer to an empty wrapper structure with no 
  * space available. */
 CLAD_API struct clad_sb * 
@@ -18,7 +20,7 @@ clad_sb_alloc(void) {
  * wrapper. Returns me. */
 CLAD_API struct clad_sb * 
 clad_sb_done(struct clad_sb *me) {
-  if ((me->space_flags > 0) && (me->bytes)) {
+  if ((me->space > 0) && (me->bytes)) {
     clad_free(me->bytes);
     me->bytes = NULL;
   } 
@@ -37,8 +39,8 @@ clad_sb_free(struct clad_sb * me) {
 CLAD_API struct clad_sb * 
 clad_sb_init_empty(struct clad_sb * me) {
   if(!me) return me;
-  me->size       = 0;
-  me->space_flags = 0;
+  me->length       = 0;
+  me->space = 0;
   me->bytes      = NULL;
   return me;
 }
@@ -50,23 +52,21 @@ clad_sb_init_cstr(struct clad_sb * me, char * str) {
 }
 
 /** Calculates the space to use for a given string length */
-static int clad_sb_space_for_len(int len)  {
+static size_t clad_sb_space_for_len(size_t len)  {
   return (1 + ((len + 1) / CLAD_SB_INCREMENT )) * CLAD_SB_INCREMENT;
 }
 
-/* Ensure nul character termination. me->size must have been set correctly. */
+/* Ensure nul character termination. me->length must have been set correctly. */
 static void clad_sb_ensure_nul(struct clad_sb * me) {
-    me->bytes[me->size] = '\0'; /* Ensure nul character termination. */
+    me->bytes[me->length] = '\0'; /* Ensure nul character termination. */
 }
 
 /** Initializes the string buffer from a C char buffer with length len. */
 CLAD_API struct clad_sb * 
-clad_sb_init_buf(struct clad_sb * me, char * str, int len) {
-  int space = clad_sb_space_for_len(len);
+clad_sb_init_buf(struct clad_sb * me, char * str, size_t len) {
+  size_t space = clad_sb_space_for_len(len);
   if (!me) return me;
   if (!str) return NULL;
-  
-  if (len < 0) return NULL;
   if (len == 0) { 
     /* special case for empty strings, don't allocate memory yet. */
     return clad_sb_init_empty(me);
@@ -75,12 +75,12 @@ clad_sb_init_buf(struct clad_sb * me, char * str, int len) {
   me->bytes = clad_calloc(space, 1);
   
   if (!me->bytes) {
-    me->space_flags = CLAD_SB_ERROR_NOMEM;
+    me->space = CLAD_SB_ERROR_NOMEM;
     return NULL;
   }
 
-  me->space_flags = space;
-  me->size       = len;
+  me->space = space;
+  me->length       = len;
   memmove(me->bytes, str, len);
   clad_sb_ensure_nul(me);
   
@@ -90,7 +90,7 @@ clad_sb_init_buf(struct clad_sb * me, char * str, int len) {
 /** Initializes the string buffer from another clad_sb. */
 CLAD_API struct clad_sb * 
 clad_sb_init_sb(struct clad_sb * me, const struct clad_sb * other) {
-  return clad_sb_init_buf(me, other->bytes, other->size);
+  return clad_sb_init_buf(me, other->bytes, other->length);
 }
 
 /** Duplicates a clad_sb. The result must be freed with clad_sb_free(). */
@@ -115,7 +115,7 @@ clad_sb_make_cstr(char * cstr) {
 /** Creates a string buffer from a c byte buffer. 
  * The result must be freed with clad_sb_free(). */
 CLAD_API struct clad_sb * 
-clad_sb_make_buf(char * cstr, int size) {
+clad_sb_make_buf(char * cstr, size_t size) {
   return clad_sb_init_buf(clad_sb_alloc(), cstr, size);
 }
 
@@ -123,7 +123,7 @@ clad_sb_make_buf(char * cstr, int size) {
 /** Returns the length of the string buffer in bytes. */
 CLAD_API int 
 clad_sb_bytesize(struct clad_sb * me) {
-  return me->size;
+  return me->length;
 }
 
 /** Returns the pointer to the byte buffer that the clad_sb wraps, 
@@ -137,14 +137,14 @@ clad_sb_bytes(struct clad_sb * me) {
   but only if it's a growth. Does not copy any data. */
 CLAD_API int clad_sb_grow(struct clad_sb * me, int len) {
   if (len < 1)               return CLAD_SB_ERROR_BADARG;
-  if (len <  me->size)       return CLAD_SB_OK;
-  if (len <  me->space_flags) return CLAD_SB_OK;
+  if (len <  me->length)       return CLAD_SB_OK;
+  if (len <  me->space) return CLAD_SB_OK;
   int space       = clad_sb_space_for_len(len);
   char * bytes    = clad_realloc(me->bytes, space);
   if (!bytes)       return CLAD_SB_ERROR_NOMEM; 
   me->bytes       = bytes;
-  me->size        = len;
-  me->space_flags  = space;
+  me->length        = len;
+  me->space  = space;
   return CLAD_SB_OK;
 } 
 
@@ -162,13 +162,13 @@ CLAD_API int
 clad_sb_cat_buf(struct clad_sb * me, char * str, int len) {
   int res;
   /* reallocate needed if the concatenated string does not fit. */
-  res = clad_sb_grow(me, me->size + len);
+  res = clad_sb_grow(me, me->length + len);
   if (res < 0) return res;
  
   /* copy data */
-  memmove(me->bytes + me->size, str, len); 
+  memmove(me->bytes + me->length, str, len); 
   /* Set correct size. */
-  me->size     = me->size + len; 
+  me->length     = me->length + len; 
   clad_sb_ensure_nul(me);
   return CLAD_SB_OK;
 }
@@ -182,7 +182,7 @@ clad_sb_cat_cstr(struct clad_sb * me, char * str) {
 /** Concatenates the contents of a clad_sb other to the clad_sb me */
 CLAD_API int 
 clad_sb_cat(struct clad_sb * me, const struct clad_sb * other) {
-  return clad_sb_cat_buf(me, other->bytes, other->size);
+  return clad_sb_cat_buf(me, other->bytes, other->length);
 }
 
 /** Appends the character c to the clad_sb me */
@@ -190,13 +190,13 @@ CLAD_API int
 clad_sb_append(struct clad_sb * me, char c) {
   int res;
   /* reallocate needed if the concatenated string does not fit. */
-  res = clad_sb_grow(me, me->size + 1);
+  res = clad_sb_grow(me, me->length + 1);
   if (res < 0) return res;
  
   /* copy data */
-  me->bytes[me->size] = c; 
+  me->bytes[me->length] = c; 
     /* Set correct size. */
-  me->size++;
+  me->length++;
   clad_sb_ensure_nul(me);
   return CLAD_SB_OK;
 }
@@ -207,7 +207,7 @@ typedef int clad_sb_simple_mapper(int c);
 /** Iterates over the characters of a string. */
 CLAD_API int clad_sb_walk(struct clad_sb * me, clad_sb_walker each, void * extra) {
   int index;
-  for (index = 0; index < me->size; index++) {
+  for (index = 0; index < me->length; index++) {
     int res; 
     res = each(me, index, me->bytes[index], extra);
     if (res != CLAD_SB_OK) return res;
@@ -219,7 +219,7 @@ CLAD_API int clad_sb_walk(struct clad_sb * me, clad_sb_walker each, void * extra
 /** Applies a map of the characters of a string in a simpler fashion. */
 CLAD_API int clad_sb_mapchar(struct clad_sb * me, clad_sb_simple_mapper mapper) {
   int index;
-  for (index = 0; index < me->size; index++) {
+  for (index = 0; index < me->length; index++) {
     int res; 
     res = mapper(me->bytes[index]);
     me->bytes[index] = res;
@@ -262,7 +262,7 @@ clad_sb_lowercase(struct clad_sb * me) {
 /** Compares strings as per strncmp. */
 CLAD_API int 
 clad_sb_cmp(const struct clad_sb * me, const struct clad_sb * other) {
-  int len = ((me->size < other->size) ? me->size : other->size);
+  int len = ((me->length < other->length) ? me->length : other->length);
   return strncmp(me->bytes, other->bytes, len);
 }
 
@@ -318,13 +318,13 @@ clad_sb_center_cstr(struct clad_sb * me, int length, const char * padding) {
  unsigned characters. Returns negative on error. */
 CLAD_API int clad_sb_at(struct clad_sb * me, int index) {
   if (index < 0) return CLAD_SB_ERROR_BADARG;
-  if (index > me->size) return CLAD_SB_ERROR_BADARG;
+  if (index > me->length) return CLAD_SB_ERROR_BADARG;
   return me->bytes[index];
 }
 
 /** Returns the last byte of the string buffer before the closing \0 character */
 CLAD_API int clad_sb_lastbyte(struct clad_sb * me) {
-  return clad_sb_at(me, me->size-1);
+  return clad_sb_at(me, me->length-1);
 }
 
 
@@ -340,10 +340,10 @@ CLAD_API int clad_sb_firstbyte(struct clad_sb * me) {
 CLAD_API int 
 clad_sb_chop(struct clad_sb * me) {
   int result;
-  if (me->size < 1) return CLAD_SB_ERROR_BADARG;
-  result = (unsigned char) me->bytes[me->size-1];
-  me->size--;
-  me->bytes[me->size] = '\0';
+  if (me->length < 1) return CLAD_SB_ERROR_BADARG;
+  result = (unsigned char) me->bytes[me->length-1];
+  me->length--;
+  me->bytes[me->length] = '\0';
   return result;
 }
 
@@ -373,15 +373,15 @@ clad_sb_index_error(const struct clad_sb * me, int begin) {
   if (!me)              return CLAD_SB_ERROR_BADARG;
   if (!me->bytes)       return CLAD_SB_ERROR_BADARG;
   if (begin < 0)        return CLAD_SB_ERROR_BADARG;
-  if (begin > me->size) return CLAD_SB_ERROR_BADARG;
+  if (begin > me->length) return CLAD_SB_ERROR_BADARG;
   return CLAD_SB_OK;  
 }
 
 /** Clamp length so it is within range for the string buffer me */
 CLAD_API int 
 clad_sb_clamp_length(const struct clad_sb * me, int start, int * length) {
-  if ((*length + start) > me->size) {
-    (*length) = me->size - start;
+  if ((*length + start) > me->length) {
+    (*length) = me->length - start;
   }
   return CLAD_SB_OK;
 }
@@ -428,7 +428,7 @@ clad_sb_left(const struct clad_sb * me, int size) {
 /** Returns the last length bytes of the clad_sb. */
 CLAD_API struct clad_sb * 
 clad_sb_right(const struct clad_sb * me, int length) {
-  return clad_sb_mid(me, me->size - length, length);
+  return clad_sb_mid(me, me->length - length, length);
 }
 
 /** "Deletes" length bytes from clad_sb, starting at start. 
@@ -453,7 +453,7 @@ clad_sb_insert_size
 CLAD_API int
 clad_sb_insert_cstr(struct clad_sb * me, int start, const char * cstr);
 
-/** Inserts cstr into the clad_sb, at start byte index. */
+/** Inserts buffer into the clad_sb, at start byte index. */
 CLAD_API int
 clad_sb_insert_buf(struct clad_sb * me, int start, const char * cstr, int size);
 

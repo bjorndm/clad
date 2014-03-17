@@ -8,72 +8,23 @@
 #include "clad/test.h"
 #include "clad/memory.h"
 #include "clad/nse.h"
+#include "clad/sb.h"
 
-USING(clad_memory, cm);
+#define CSTR "Hello!!!"
 
-
-
-TEST_FUNC(clad_malloc_ns) {
-  void * ptr1, * ptr2;
-  
-  ptr1 = NULL;
-  ptr2 = NULL;
-  ptr1 = cm->malloc(123);
-  ptr2 = cm->malloc(123);
-  TEST_PTRNEQ(ptr1, ptr2);
-  cm->free(ptr2);
-  cm->free(ptr1);
+TEST_FUNC(clad_sb_init) {
+  struct clad_sb buf;
+  TEST_ZERO(clad_sb_init_cstr(&buf, CSTR));
+  TEST_STREQ(buf.bytes, CSTR);
+  TEST_INTEQ(buf.length, strlen(CSTR));
+  TEST_ASSERT(buf.space > strlen(CSTR));
+  clad_sb_done(&buf);
   TEST_DONE();
 }
 
-TEST_FUNC(clad_malloc) {
-  void * ptr1, * ptr2;
-  ptr1 = NULL;
-  ptr2 = NULL;
-  ptr1 = clad_malloc(123);
-  ptr2 = clad_malloc(123);
-  TEST_PTRNEQ(ptr1, ptr2);
-  clad_free(ptr2);
-  clad_free(ptr1);
-  TEST_DONE();
-}
-
-TEST_FUNC(clad_calloc) {
-  int * ptr1, * ptr2;
-  ptr1 = NULL;
-  ptr2 = NULL;
-  ptr1 = clad_calloc(123, sizeof(int));
-  ptr2 = clad_calloc(123, sizeof(int));
-  TEST_PTRNEQ(ptr1, ptr2);
-  TEST_ZERO(ptr1[7]);
-  TEST_ZERO(ptr2[7]);
-  clad_free(ptr2);
-  clad_free(ptr1);
-  TEST_DONE();
-}
-
-TEST_FUNC(clad_realloc) {
-  int * ptr1, * ptr2, * paid;
-  ptr1 = NULL;
-  ptr2 = NULL;
-  ptr1 = clad_calloc(123, sizeof(int));
-  ptr2 = clad_calloc(123, sizeof(int));
-  TEST_PTRNEQ(ptr1, ptr2);
-  TEST_ZERO(ptr1[7]);
-  TEST_ZERO(ptr2[7]);
-  paid = clad_realloc(ptr1, sizeof(int) * 200);
-  paid[150] = 77;
-  TEST_INTEQ(77, paid[150]);
-  clad_free(paid);
-  clad_free(ptr2);
-  TEST_DONE();
-}
 
 int main(void) {
   TEST_INIT();
-  TEST_RUN(clad_malloc);
-  TEST_RUN(clad_calloc);
-  TEST_RUN(clad_realloc);
-  TEST_RUN(clad_malloc_ns);
+  TEST_RUN(clad_sb_init);
   TEST_REPORT();
 }
