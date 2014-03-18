@@ -25,11 +25,15 @@ CLAD already provides a first version of the following features:
 * platform detection macros based on Bjorn Reese's work.
 * simple json parser based on Serge A. Zaitsev's work
 
-The following features are planned:
+The following features are under development:
 
 * simple memory pools
 * simple string buffers
 * simple regular expressions
+
+
+The following features are planned:
+
 * dynamic arrays
 * linked lists
 * intrusive linked lists
