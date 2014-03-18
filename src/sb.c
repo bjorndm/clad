@@ -133,18 +133,17 @@ clad_sb_bytes(struct clad_sb * me) {
   return me->bytes;
 }
 
-/** Reallocates the string buffer's bytes to fit a total length of len,
-  but only if it's a growth. Does not copy any data. */
-CLAD_API int clad_sb_grow(struct clad_sb * me, int len) {
-  if (len < 1)               return CLAD_SB_ERROR_BADARG;
-  if (len <  me->length)       return CLAD_SB_OK;
-  if (len <  me->space) return CLAD_SB_OK;
-  int space       = clad_sb_space_for_len(len);
+/** Reallocates the string buffer's bytes to fit a total length of new_length,
+  but only if it's a growth. On alters space and leaves length alone. */
+CLAD_API int clad_sb_grow(struct clad_sb * me, size_t new_length) {
+  if (new_length < 1)                 return CLAD_SB_ERROR_BADARG;
+  if (new_length <  me->length)       return CLAD_SB_OK;
+  if (new_length <  me->space)        return CLAD_SB_OK;
+  int space       = clad_sb_space_for_len(new_length);
   char * bytes    = clad_realloc(me->bytes, space);
   if (!bytes)       return CLAD_SB_ERROR_NOMEM; 
   me->bytes       = bytes;
-  me->length        = len;
-  me->space  = space;
+  me->space       = space;
   return CLAD_SB_OK;
 } 
 

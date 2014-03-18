@@ -200,6 +200,19 @@ clad_test_false(struct clad_test * test, int boole, const char * explain);
   struct clad_test ts_ , * t_; t_ = &ts_ ; clad_test_init(t_)
 #define TEST_REPORT()         return clad_test_report(t_);
 
+/* Pointer to the active test struct */
+#define TEST_POINTER() t_
+
+/* Set up a pointer to the active test struct from an incoming pointer. 
+ Useful in test callbacks. */
+#define TEST_SET_POINTER(DATA) \
+  struct clad_test * t_ = DATA ;
+
+
+/* Set up a pointer to the active test struct from an incoming pointer. 
+ Useful in test callbacks. */
+
+
 
 
 #endif

@@ -136,7 +136,7 @@ clad_sb_cmp(const struct clad_sb * me, const struct clad_sb * other);
 
 /** Reallocates the string buffer's bytes to fit a total length of len,
   but only if it's a growth. Does not copy any data. */
-CLAD_API int clad_sb_grow(struct clad_sb * me, int len);
+CLAD_API int clad_sb_grow(struct clad_sb * me, size_t len);
 
 /** Converts the string to an integer. Returns nonzero on failure. 
  * Stores result in result if this is not NULL. USes strtod with a 0 base, so 

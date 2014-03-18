@@ -73,6 +73,7 @@ Credits
 
 * Bjorn Reese for predef.h
 * Serge A. Zaitsev's for jsmn
+* Sergey Lyubka for the foundations of slre.
 
 Ideas
 -----
