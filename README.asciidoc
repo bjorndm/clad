@@ -29,6 +29,7 @@ The following features are planned:
 
 * simple memory pools
 * simple string buffers
+* simple regular expressions
 * dynamic arrays
 * linked lists
 * intrusive linked lists
