@@ -1,0 +1,66 @@
+CLAD Design Ideas
+=================
+
+Generic Programming
+-------------------
+
+In a low level language, such as C or Pascal, there is a reuse problem 
+when implementing data structures. The problem is that in a simple 
+implementation, the payload or element type of the data structure is hard 
+coded. For example, a simple linked list of struct foo that embeds the next 
+and previous pointers cannot be used with any other structs or types as the 
+elements.
+
+With such a simple approach, one has to rewrite the data structure from 
+scratch for every element type one wants to support. While this may be 
+OK for certain applications, and will certainly be optimal in
+performance, it is cumbersome and error prone to do so.
+
+Different approaches can be used to try to solve this problem, but 
+all have some downsides to them.
+
+The first way one can solve the problem is by using an element type that is
+"generic" in the programming language. In an OOP language that has a 
+single parent object to all objects, this parent object can be the element 
+type. If the language has generic pointers, a generic data pointer 
+like void * can be used to hold a reference to the true element. Or,
+one could even use an integer as element type, and use that integer to 
+look up the data in an array of the true element type.
+
+The advantage of this approach is small code size. But since the 
+compiler loses information about the object linked, performance will be 
+lower.
+
+The second way one can solve this problem is though code generation. 
+The data structure is implemented in such a way that the exact type of the 
+element can be parametrized by means internal or external to the language. 
+Macros, templates or code generator tools can be used for this.
+
+The advantage of this approach is that performance should be equal to 
+hand-written implementation, but the disadvantage is that it will cause 
+bloat of the binary, since now, the compiler will need to generate 
+functions for every element type that is used with the code generated 
+data structure. Another disadvantage is that if complex templates are
+allowed, which in turn use template code, it can lead to very hard to 
+understand code that the template engine has to work long on, with slow 
+compile times as the result.
+
+A third approach is to use intrusive data structures, that is, the 
+data structure do not reference the elements, but the elements reference 
+the data structures. This has both good performance and avoids 
+code bloat. But it is not as convenient in usage, especially if an element 
+needs to be part of several data structures at the same time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
